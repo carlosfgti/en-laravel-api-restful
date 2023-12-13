@@ -5,17 +5,25 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function __construct(private UserRepository $userRepository)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::paginate();
-        return UserResource::collection($users);
+        return UserResource::collection($this->userRepository->getPaginate(
+            filter: $request->get('filter', ''),
+            totalPerPage: $request->get('total_per_page', 15),
+            page: $request->get('page', 1),
+        ));
     }
 
     /**
