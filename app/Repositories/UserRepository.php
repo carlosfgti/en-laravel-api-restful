@@ -28,4 +28,9 @@ class UserRepository
         $data['password'] = bcrypt($dto->password);
         return $this->model->create($data);
     }
+
+    public function findById(string $id): ?User
+    {
+        return $this->model->find($id);
+    }
 }
