@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\DTO\User\CreateUserDTO;
+use App\DTO\User\EditUserDTO;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -32,5 +33,18 @@ class UserRepository
     public function findById(string $id): ?User
     {
         return $this->model->find($id);
+    }
+
+    public function update(EditUserDTO $dto): bool
+    {
+        if (!$user = $this->findById($dto->id)) {
+            return false;
+        }
+        $data = (array) $dto;
+        $data['password'] = bcrypt($dto->password);
+        if ($dto->password === null) {
+            unset($data['password']);
+        }
+        return $user->update($data);
     }
 }
